@@ -2,5 +2,5 @@
 # only the standard library; these are for the service.
 mcp>=2.2,<3
 duckdb>=1.1,<2
-uvicorn>=0.30
+uvicorn>=0.54.0
 pytest>=8
