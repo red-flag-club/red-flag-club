@@ -3,4 +3,4 @@
 mcp>=2.2,<3
 duckdb>=1.1,<2
 uvicorn>=0.30
-pytest>=8
+pytest>=9.2.0
