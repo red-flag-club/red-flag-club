@@ -1,0 +1,72 @@
+[
+  {
+    "title": "Layer 1: fewer false alarms without missing more pumps",
+    "labels": ["type:feature", "area:layer1", "hard-rule", "help wanted"],
+    "what": "Reduce Layer 1's false-alarm rate (0.782 on 400 controls) while keeping recall at or above 0.783 on 295 positives (walk-forward, specs/002).",
+    "why": "When most normal run-ups also get a VETO, people learn to ignore it, and then it fails on the one that matters.",
+    "how": "New point-in-time features (float from SEC filings, promotion signals, filing cadence), each tested walk-forward with no lookahead. Every result is reported with sample sizes; a precision gain that costs recall must say so."
+  },
+  {
+    "title": "Point-in-time float and market cap for small caps from SEC filings",
+    "labels": ["type:feature", "area:layer1", "help wanted"],
+    "what": "A function float_as_of(symbol, date) that reads shares outstanding and float from SEC filings (10-K, 10-Q, 20-F, F-1, 424B) known on that date.",
+    "why": "A tiny float is the strongest red flag in FINRA's guidance, and today it is 'unknown' for most small caps, so it is counted as a red flag for everyone.",
+    "how": "SEC EDGAR (public, free) with a User-Agent contact; parse the cover page and prospectus figures; a test proves nothing filed after the date is used."
+  },
+  {
+    "title": "Paste-a-message red-flag checker",
+    "labels": ["type:feature", "area:site", "area:assistant", "good first issue"],
+    "what": "A box on the site where someone pastes a message from an investing group and sees which known tactics it uses (free 'professor', 'we all buy together', screenshots for approval, guaranteed returns, compensation trade).",
+    "why": "The scam happens in the chat. Meeting people at that moment, with their own words, is the warning most likely to work.",
+    "how": "Rules built from the story tactic tags and the quiz, running only in the browser. Nothing pasted is sent or stored. Never says a stock is a fraud."
+  },
+  {
+    "title": "'Recovery' scam detector and warning",
+    "labels": ["type:feature", "area:site", "area:assistant", "good first issue"],
+    "what": "Flag messages that offer to recover lost money for a fee, a 'tax', a deposit or a 'compensation trade'.",
+    "why": "The second scam targets people who have just lost money; it often takes what is left.",
+    "how": "Same in-browser rules engine as the message checker, plus a prominent card on the 'Got pumped?' page."
+  },
+  {
+    "title": "Report helper for SEC TCR and FBI IC3",
+    "labels": ["type:feature", "area:site", "help wanted"],
+    "what": "A guided form that turns a victim's notes into a ready-to-paste report with a checklist of the evidence to attach.",
+    "why": "Many victims don't report because it feels pointless or too hard. Reports are how regulators connect cases.",
+    "how": "Static page; text is generated in the browser and never sent anywhere; links to sec.gov/tcr and ic3.gov."
+  },
+  {
+    "title": "Prebunking cards for groups still in the trust-building phase",
+    "labels": ["type:feature", "area:site", "good first issue"],
+    "what": "Short, shareable 'what happens next in groups like this' cards for WhatsApp and Facebook.",
+    "why": "Warnings shown before the pitch reduce buying (in an OSC study, from 38.1% to 21.3%); generic warnings don't.",
+    "how": "Content and design work: one image and one link per card, translated where possible."
+  },
+  {
+    "title": "Translate the site, quiz and help page",
+    "labels": ["type:translation", "area:site", "good first issue", "help wanted"],
+    "what": "The site, quiz, assistant answers and victim help in more languages.",
+    "why": "These groups target communities in their own languages.",
+    "how": "Comment with the language you can help with; a spec will define the translation file format first."
+  },
+  {
+    "title": "Per-brokerage adapters for saved price payloads",
+    "labels": ["type:feature", "area:server", "good first issue"],
+    "what": "Convert another brokerage's historical price export into the payload format the parser reads (README, 'Expected file format').",
+    "why": "So anyone can rebuild the event sets and check the published accuracy with their own data.",
+    "how": "One adapter function per source plus a synthetic test file; no real data committed."
+  },
+  {
+    "title": "More than one story reviewer",
+    "labels": ["type:feature", "area:stories", "hard-rule"],
+    "what": "Let several trusted reviewers decrypt and approve stories, with an approval log.",
+    "why": "One reviewer is a bottleneck and a single point of failure.",
+    "how": "Per-reviewer public keys in the Worker (encrypt to each), a signed approval record. Spec first; the privacy bar is not lowered."
+  },
+  {
+    "title": "Forward validation of Layer 1 from the live scan log (L2.4)",
+    "labels": ["type:feature", "area:layer2"],
+    "what": "Publish Layer 1's live recall and false-alarm rate from the append-only scan log.",
+    "why": "A backtest is not proof; live results are.",
+    "how": "Needs about six months of forward rows (around May 2027); the metrics code exists; this issue tracks the review and publication."
+  }
+]

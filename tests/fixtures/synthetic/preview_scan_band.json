@@ -1,0 +1,102 @@
+{
+ "data": {
+  "result": {
+   "total_items": 384,
+   "results": [
+    {
+     "ticker": "AAAA",
+     "instrument_type": "EQUITY",
+     "columns": {
+      "Symbol": "AAAA",
+      "Name": "Synthetic Company AAAA",
+      "Asset type": "STOCK",
+      "Last": "11.00",
+      "Market cap": "9.0000e+06",
+      "Float": "800000",
+      "Shares outstanding": "900000",
+      "Average volume": "3500"
+     }
+    },
+    {
+     "ticker": "BBBB",
+     "instrument_type": "EQUITY",
+     "columns": {
+      "Symbol": "BBBB",
+      "Name": "Synthetic Company BBBB",
+      "Asset type": "STOCK",
+      "Last": "9.50",
+      "Market cap": "7.5000e+06",
+      "Float": "750000",
+      "Shares outstanding": "850000",
+      "Average volume": "3600"
+     }
+    },
+    {
+     "ticker": "CCCC",
+     "instrument_type": "EQUITY",
+     "columns": {
+      "Symbol": "CCCC",
+      "Name": "Synthetic Company CCCC",
+      "Asset type": "STOCK",
+      "Last": "8.00",
+      "Market cap": "6.0000e+06",
+      "Float": "700000",
+      "Shares outstanding": "800000",
+      "Average volume": "3700"
+     }
+    },
+    {
+     "ticker": "DDDD",
+     "instrument_type": "EQUITY",
+     "columns": {
+      "Symbol": "DDDD",
+      "Name": "Synthetic Company DDDD",
+      "Asset type": "STOCK",
+      "Last": "6.50",
+      "Market cap": "4.5000e+06",
+      "Float": "650000",
+      "Shares outstanding": "750000",
+      "Average volume": "3800"
+     }
+    },
+    {
+     "ticker": "EEEE",
+     "instrument_type": "EQUITY",
+     "columns": {
+      "Symbol": "EEEE",
+      "Name": "Synthetic Company EEEE",
+      "Asset type": "STOCK",
+      "Last": "5.00",
+      "Market cap": "3.0000e+06",
+      "Float": "600000",
+      "Shares outstanding": "700000",
+      "Average volume": "3900"
+     }
+    }
+   ],
+   "sorted_by": "Last desc",
+   "filters_applied": [
+    {
+     "filter_type": "Asset type",
+     "filter_type_enum": "FILTER_TYPE_INSTRUMENT_TYPE",
+     "predicate": "=",
+     "values": [
+      "STOCK"
+     ],
+     "expression": "type"
+    },
+    {
+     "filter_type": "Market cap",
+     "filter_type_enum": "FILTER_TYPE_MARKET_CAP",
+     "predicate": "BETWEEN",
+     "values": [
+      "0",
+      "10000000"
+     ],
+     "expression": "fundamental.marketCap"
+    }
+   ]
+  }
+ },
+ "synthetic": true
+}

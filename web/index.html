@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Red Flag Club — pump-and-dump checks &amp; real stories</title>
+<meta name="description" content="Red Flag Club: free risk checks for US penny stocks, daily top-100 run-up risk lists, real anonymised stories from people who were pumped and dumped, and what to do if it happened to you. Not investment advice.">
+<meta name="theme-color" content="#d03b3b">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Red Flag Club">
+<meta property="og:title" content="Red Flag Club — the investment club that tells you when to walk away">
+<meta property="og:description" content="Being pushed a hot penny stock in a group chat? Check it in 10 seconds. Read real stories. Share yours so others don't get dumped.">
+<meta property="og:image" content="{{SITE_URL}}og.png">
+<meta property="og:url" content="{{SITE_URL}}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Red Flag Club">
+<meta name="twitter:description" content="Check a stock before you buy. Real stories. Free, no sign-up.">
+<meta name="twitter:image" content="{{SITE_URL}}og.png">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap bar">
+    <a class="brand" href="#/" aria-label="Red Flag Club, home"><svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3v18" stroke="var(--critical)" stroke-width="2.2" stroke-linecap="round"/><path d="M6 4h11l-2.5 4L17 12H6z" fill="var(--critical)"/></svg>Red Flag <span>Club</span></a>
+    <form class="quick" id="quick" role="search" autocomplete="off">
+      <label class="sr" for="quick-in">Look up a ticker</label>
+      <input id="quick-in" placeholder="Ticker, e.g. ABCD" maxlength="10" spellcheck="false" autocapitalize="characters">
+      <button type="submit">Check</button>
+    </form>
+  </div>
+  <nav class="wrap menu" aria-label="Main">
+    <a href="#/">Today</a>
+    <a href="#/top/day">Top 100</a>
+    <a href="#/scan">Risk scan</a>
+    <a href="#/stories">Stories</a>
+    <a href="#/share">Share yours</a>
+    <a href="#/quiz">Quiz</a>
+    <a href="#/lookup">Look up</a>
+    <a href="#/analytics">Analytics</a>
+    <a href="#/track">Track record</a>
+    <a href="#/assistant">Assistant</a>
+    <a href="#/help">Got pumped?</a>
+    <a href="#/about">About</a>
+  </nav>
+</header>
+<main id="main" class="wrap" tabindex="-1"><p class="muted">Loading…</p></main>
+<footer class="wrap foot">
+  <p id="foot-note">Not investment advice. Not a buy signal. These are risk lists: a stock listed here has not been found to be a fraud. Data can be wrong or late.</p>
+  <p class="small muted" id="foot-indep">Red Flag Club is independent and community-run. It is not affiliated with, endorsed by or sponsored by any brokerage (including Robinhood), data provider or company named on this site.</p>
+  <p class="muted" id="foot-data"></p>
+</footer>
+<noscript><p class="wrap">This page needs JavaScript to show the data. The raw files are in <a href="data/">data/</a>.</p></noscript>
+<script type="module" src="app.js"></script>
+</body>
+</html>

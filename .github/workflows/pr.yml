@@ -1,0 +1,11 @@
+name: pr
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, labeled, unlabeled]
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+jobs:
+  spec-gate:
+    uses: red-flag-club/.github/.github/workflows/spec-gate.yml@main

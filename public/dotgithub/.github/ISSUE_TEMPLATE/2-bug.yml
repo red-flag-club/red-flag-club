@@ -1,0 +1,15 @@
+name: "🐞 Bug"
+description: Something doesn't work as documented.
+labels: ["type:bug", "phase:inbox"]
+body:
+  - type: textarea
+    id: what
+    attributes: {label: What happened, description: "What you did, what you expected, what you saw instead."}
+    validations: {required: true}
+  - type: textarea
+    id: why
+    attributes: {label: Why it matters, description: "Who is affected, and could it mislead someone about a stock's risk?"}
+  - type: textarea
+    id: how
+    attributes: {label: How to reproduce, description: "Steps, page or command, browser or Python version. No personal data or account screenshots."}
+    validations: {required: true}

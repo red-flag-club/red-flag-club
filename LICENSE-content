@@ -1,0 +1,13 @@
+Documentation, specs, methodology and site text in this repository
+(docs/, specs/, web/*.html and the text in web/*.js) are licensed under the
+Creative Commons Attribution 4.0 International licence (CC BY 4.0):
+https://creativecommons.org/licenses/by/4.0/
+
+You may share and adapt them for any purpose, including commercially, if you
+give appropriate credit ("Red Flag Club contributors"), link to the licence and
+say if you changed anything.
+
+Code is under the MIT licence (LICENSE). Published stories are not in this
+repository; they are in red-flag-club/stories under CC BY-NC-ND 4.0.
+
+Nothing in this repository is financial advice.

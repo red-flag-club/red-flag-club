@@ -1,0 +1,16 @@
+name: "🌐 Translation"
+description: Help people read the site, quiz or assistant in their language.
+labels: ["type:translation", "area:site", "phase:inbox"]
+body:
+  - type: input
+    id: language
+    attributes: {label: Language, placeholder: "e.g. Hindi, Spanish, Vietnamese"}
+    validations: {required: true}
+  - type: textarea
+    id: why
+    attributes: {label: Why this language, description: "Communities you know are targeted in this language."}
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: What you can translate
+      options: [{label: Site pages}, {label: Quiz}, {label: Assistant answers}, {label: Victim help page}]

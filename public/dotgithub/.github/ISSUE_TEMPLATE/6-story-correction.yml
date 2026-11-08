@@ -1,0 +1,22 @@
+name: "✏️ Story correction or takedown"
+description: Ask us to correct or remove a published story (authors, people named indirectly, or companies).
+labels: ["type:story-correction", "area:stories", "phase:inbox"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Published stories are anonymised first-person accounts. If you wrote one and want it changed or removed, or you think one identifies someone, tell us here. **Don't prove who you are in public**: a maintainer will reply with a private way to confirm.
+  - type: input
+    id: story
+    attributes: {label: Story id, description: "Shown at the bottom of the story, e.g. owner-ryde-2024"}
+    validations: {required: true}
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Request
+      options: ["Take it down", "Correct a fact", "It identifies someone", "Other"]
+    validations: {required: true}
+  - type: textarea
+    id: what
+    attributes: {label: What and why, description: "What should change and why. No personal data."}
+    validations: {required: true}

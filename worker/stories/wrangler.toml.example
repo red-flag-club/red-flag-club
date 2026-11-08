@@ -1,0 +1,13 @@
+# Copy to wrangler.toml, then:  npx wrangler deploy
+# Secrets (never in this file):
+#   npx wrangler secret put GITHUB_TOKEN        # fine-grained: Contents R/W on the inbox repo only
+#   npx wrangler secret put TURNSTILE_SECRET    # optional
+name = "red-flag-club-stories"
+main = "index.js"
+compatibility_date = "2026-01-01"
+
+[vars]
+INBOX_REPO = "red-flag-club/stories-inbox"
+ALLOWED_ORIGIN = "https://red-flag-club.github.io"
+# from `python3 scripts/stories.py keygen` (public, safe to commit)
+STORIES_PUBLIC_KEY = ""

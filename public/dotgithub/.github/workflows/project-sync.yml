@@ -1,0 +1,46 @@
+# Copies the board's Phase onto issues as phase:* labels (docs/workflow.md).
+# Setup: repo variable PROJECT_NUMBER; either variables BOT_APP_ID + secret
+# BOT_APP_PRIVATE_KEY (a GitHub App owned by the org, recommended so label
+# changes are attributed to the bot), or secret PROJECT_TOKEN (fine-grained,
+# from the maintainer account: org Projects read, Issues write on all repos).
+name: project-sync
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Print only"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: project-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.repository == 'red-flag-club/.github' && vars.PROJECT_NUMBER != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - id: app
+        if: vars.BOT_APP_ID != ''
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+          owner: red-flag-club
+      - name: Sync labels from the board
+        env:
+          PROJECT_TOKEN: ${{ steps.app.outputs.token || secrets.PROJECT_TOKEN }}
+          PROJECT_NUMBER: ${{ vars.PROJECT_NUMBER }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+        run: python3 .github/scripts/project_sync.py

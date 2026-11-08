@@ -1,0 +1,43 @@
+name: "💡 Idea or feature (starts a spec)"
+description: Propose something new. If it's accepted, it becomes a Spec Kit spec and moves through the review gates.
+labels: ["type:feature", "phase:inbox"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Every feature starts here and then becomes `specs/NNN-name/spec.md`. A maintainer reviews it at each step (see [how work moves](https://github.com/red-flag-club/red-flag-club/blob/main/docs/workflow.md)).
+        **Never include personal data** (names, phone numbers, account numbers, screenshots of chats).
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+      description: What should exist that doesn't today? Describe the behaviour, not the code.
+      placeholder: "When someone pastes a message from an investment group, the site lists which red flags it contains."
+    validations: {required: true}
+  - type: textarea
+    id: why
+    attributes:
+      label: Why (who it protects, and how)
+      description: Who is helped (someone already hurt, someone being groomed in a group right now, a family member)? What harm does it prevent? Any evidence (a study, a pattern seen in stories)?
+    validations: {required: true}
+  - type: textarea
+    id: how
+    attributes:
+      label: How (rough idea, optional)
+      description: Your idea of how it could work. The plan phase decides the details.
+  - type: textarea
+    id: success
+    attributes:
+      label: How we'd know it works
+      description: Something we can measure or test.
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Ground rules
+      options:
+        - label: "It never tells anyone to buy, and never generates a buy signal."
+          required: true
+        - label: "It never calls a specific stock or person a fraud; it shows red flags and evidence."
+          required: true
+        - label: "I haven't included anyone's personal data."
+          required: true

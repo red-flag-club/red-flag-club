@@ -1,0 +1,8 @@
+# Every change needs a maintainer's review (docs/workflow.md).
+# Founder and maintainer for now; switch to a @red-flag-club/maintainers team when there are more.
+*                       @red-flag-club/maintainers
+# Hard-rule areas: two approvals are required by branch protection; listed here for visibility.
+/src/layer1.py          @red-flag-club/maintainers
+/scripts/stories.py     @red-flag-club/maintainers
+/scripts/public_export.py @red-flag-club/maintainers
+/worker/                @red-flag-club/maintainers

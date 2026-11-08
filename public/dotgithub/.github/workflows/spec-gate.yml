@@ -1,0 +1,29 @@
+# Reusable: every Red Flag Club repo calls this on pull requests.
+#   jobs:
+#     spec-gate:
+#       uses: red-flag-club/.github/.github/workflows/spec-gate.yml@main
+# See docs/workflow.md in red-flag-club/red-flag-club.
+name: spec-gate
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+jobs:
+  spec-gate:
+    runs-on: ubuntu-latest          # never a self-hosted runner: fork PRs run here
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: red-flag-club/.github
+          path: org
+          persist-credentials: false
+      - name: Check the linked issue's phase and the hard-rule checklist
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 org/.github/scripts/spec_gate.py

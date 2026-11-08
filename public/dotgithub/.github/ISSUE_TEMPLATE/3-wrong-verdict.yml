@@ -1,0 +1,26 @@
+name: "🚩 Wrong verdict (missed pump or false alarm)"
+description: A stock got the wrong verdict. These reports are how the checks get better.
+labels: ["type:wrong-verdict", "area:layer1", "phase:inbox"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        We bias toward **false alarms**: a false alarm costs someone one skipped trade; a missed pump can cost their savings. Missed pumps are the most valuable reports. Please only give public facts.
+  - type: input
+    id: symbol
+    attributes: {label: Ticker, placeholder: "e.g. ABCD"}
+    validations: {required: true}
+  - type: input
+    id: date
+    attributes: {label: Session date of the verdict, placeholder: "YYYY-MM-DD"}
+    validations: {required: true}
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What went wrong
+      options: ["Missed: it was pumped and dumped but got NO FLAGS or CAUTION", "False alarm: VETO, but it was a normal stock", "Flags or reasons are wrong"]
+    validations: {required: true}
+  - type: textarea
+    id: why
+    attributes: {label: Why you think so, description: "Public evidence only: price path, SEC filings, news, regulator actions. No screenshots of private chats."}
+    validations: {required: true}

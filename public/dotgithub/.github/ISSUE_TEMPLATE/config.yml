@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "I lost money / I think I'm in a scam group right now"
+    url: https://red-flag-club.github.io/#/help
+    about: "Start here: what to do now, where to report (SEC, FBI IC3, FINRA), and how to spot a 'recovery' scam. Please don't post your details in an issue."
+  - name: "Share your story (private, encrypted)"
+    url: https://red-flag-club.github.io/#/share
+    about: "Stories go through an encrypted form, are anonymised, and are published only after review. Never post a story as an issue."
+  - name: "Questions and discussion"
+    url: https://github.com/red-flag-club/red-flag-club/discussions
+    about: "Ask anything, or ask the community 'is this a red flag?'"
+  - name: "Security vulnerability"
+    url: https://github.com/red-flag-club/red-flag-club/security/advisories/new
+    about: "Report privately. Please don't open a public issue."

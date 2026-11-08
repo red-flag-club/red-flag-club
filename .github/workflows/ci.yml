@@ -1,0 +1,51 @@
+# Public CI. GitHub-hosted runners only, no secrets, read-only token: pull
+# requests from forks run here safely. Never add a self-hosted runner to this
+# repository (a fork's PR could run code on it).
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        python: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: python -m pip install -r server/requirements.txt pytest
+      - name: Python tests (synthetic fixtures, no network)
+        run: python -m pytest -q
+      - name: Synthetic fixtures are reproducible
+        run: |
+          python scripts/make_synthetic.py
+          git diff --exit-code -- tests/fixtures/synthetic
+
+  node:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-node@v4
+        with: {node-version: "20"}
+      - run: node --test web/*.test.mjs worker/stories/*.test.mjs
+
+  leak-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: No personal data, brokerage payloads or private paths
+        run: python3 scripts/public_export.py check --tree .

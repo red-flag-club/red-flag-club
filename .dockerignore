@@ -1,0 +1,10 @@
+# Allow-list: the image gets code and the synthetic fixtures, nothing else.
+*
+!server/
+!web/
+!community/stories/approved/
+!src/
+!scripts/
+!tests/fixtures/synthetic/
+**/__pycache__
+**/.pytest_cache

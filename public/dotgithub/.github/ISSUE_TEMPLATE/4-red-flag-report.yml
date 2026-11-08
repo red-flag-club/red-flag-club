@@ -1,0 +1,25 @@
+name: "📣 Red-flag pattern seen in the wild"
+description: A tactic a group or promoter is using right now (no names, numbers or links to the group).
+labels: ["type:red-flag-report", "phase:inbox"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This helps the quiz, the assistant and the checks learn new tactics. **Don't post** names, phone numbers, group links, screenshots or anything that identifies a person, including you.
+        If you're in a group right now and have money at risk, read [what to do now](https://red-flag-club.github.io/#/help) first.
+  - type: dropdown
+    id: channel
+    attributes:
+      label: Where
+      options: [WhatsApp, Telegram, Facebook ad, Instagram, X / Twitter, TikTok, YouTube, Discord, Reddit, Text message, Phone call, Email, Dating app, Other]
+    validations: {required: true}
+  - type: textarea
+    id: what
+    attributes: {label: What they say or do, description: "e.g. 'a professor teaches for free for months, then a rocket plan; you must send screenshots of your buy'."}
+    validations: {required: true}
+  - type: textarea
+    id: why
+    attributes: {label: Why it's a red flag, description: "What makes it a trap, in your view."}
+  - type: input
+    id: tickers
+    attributes: {label: Ticker(s) pushed, if any, placeholder: "ABCD"}
