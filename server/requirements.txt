@@ -1,6 +1,6 @@
 # pd-defence MCP server (specs/003-mcp-server). The defence path itself needs
 # only the standard library; these are for the service.
 mcp>=2.2,<3
-duckdb>=1.1,<2
+duckdb>=2.0.0,<3
 uvicorn>=0.30
 pytest>=8
