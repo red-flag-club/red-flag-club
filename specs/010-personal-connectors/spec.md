@@ -1,8 +1,8 @@
-# Feature Specification: Personal connectors: analyse your own accounts on your own machine
+# Feature Specification: Personal connectors in the browser: your own accounts, your own data, your own machine
 
 **Feature Branch**: `spec/010-personal-connectors`
 
-**Created**: 2026-11-08
+**Created**: 2026-11-08 · **Revised**: 2026-11-12 (browser-only design)
 
 **Status**: Draft (phase: Specify)
 
@@ -10,127 +10,206 @@
 
 **Input**: Maintainer, 2026-11-08: "This platform should provide connectors for
 the community to connect their personal account if they want a detailed
-analysis. For example my friends and I can connect to Robinhood or Vanguard to
-fetch and analyse in my local cache."
+analysis." Revised 2026-11-12: "Let community members connect their own
+account created in Tiingo, Massive or Robinhood, configured with their API key
+or MCP interface. The GitHub Pages application should pull the relevant data
+and store it in the local browser cache. Nothing is stored in the public
+GitHub repo, but users can connect, pull and query historical data. It should
+all run locally on the user's machine. Provide the option to pull data from
+different sources through their own personal account."
 
 ## What, why, how
 
-- **What:** a person runs Red Flag Club on their own computer and connects
-  their own brokerage data (Robinhood, Vanguard, Fidelity, Schwab and others).
-  They get a private report: red flags on every holding, warnings when too much
-  is in one tiny stock, "was I pumped?" on past buys, and the position rules for
-  anything already held.
-- **Why:** the public site can't show price-based analysis (data licences), and
-  people's real exposure is in their own accounts. In this project's founding
-  story, everything went into one microcap over three days; a private report
-  saying "92% of your account is in one stock that matches the pump profile"
-  would have been the warning that mattered. Data people fetch from their own
-  accounts is theirs to analyse on their own machine.
-- **How:** local-only, read-only connectors that import into a local cache.
-  Nothing is uploaded, nothing is shared with the public site, nothing can
-  place an order. The existing local server (`server/`, Docker) runs the
-  checks.
+- **What:** a "My data" section of the public site
+  (red-flag-club.github.io) where a person connects **their own** data
+  sources: a Tiingo or Massive API key, their Robinhood account through
+  Robinhood's read-only MCP tools, or files exported from any brokerage. The
+  page pulls the data straight from the source into **that browser's own
+  storage**, and runs the full Red Flag Club analysis there: price-based pump
+  checks, the market-wide risk scan, look-ups with history, red flags on their
+  holdings, "was I pumped?" on past buys, and the position rules.
+- **Why:** free data plans and brokerage data are licensed to the person who
+  holds the account, for personal use; the project can't republish them (see
+  spec 009). But that person *can* analyse their own data on their own
+  machine. Doing it in the browser means no install, no server, no Red Flag
+  Club account, and nothing for the project to store, leak or be asked to hand
+  over. Friends and family each use their own browser with their own keys.
+- **How:** the site's code runs in the visitor's browser. Requests go from
+  the browser directly to the provider the person chose. Results go into the
+  browser's local database (IndexedDB) and never leave it. The site's servers
+  (GitHub Pages) only ever serve the same static files to everyone.
+
+## Trust model (what the person is trusting, stated on the page)
+
+- **Red Flag Club never sees keys, account data or results.** There's no
+  backend; GitHub Pages serves static files only.
+- **Keys and data live in this browser only**, on this device, for this site's
+  address. Clearing site data deletes them. They are not synced to other
+  devices.
+- **The person trusts the site's code.** Anyone who could change the published
+  JavaScript could, in principle, read keys in the browser. Mitigations are in
+  FR-009 to FR-012. The page says so plainly, and links to the exact source.
+- **Their provider's terms still apply.** Using your own key for your own
+  analysis is personal use; the page reminds people not to share exports.
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Import a CSV export and get a private report (Priority: P1)
+### User Story 1 - Connect your own market-data key (Priority: P1)
 
-A Vanguard customer downloads their holdings and transactions as CSV from the
-Vanguard website, drops the files into Red Flag Club running on their laptop,
-and gets a report in their browser at `localhost`.
+A community member creates a free Tiingo or Massive account, copies their API
+key into "My data → Connect a source", and chooses what to pull: the stocks
+they care about, or (Massive) the whole market for the last N sessions. The
+page pulls the data into their browser, showing progress and the provider's
+free-tier limits, and can resume after a reload. Then the Top 100, the risk
+scan and every look-up work with prices and history, for them only.
 
-**Why this priority**: every broker offers CSV export; it needs no password,
-no API and no third party, so it works for everyone today.
+**Why this priority**: it unlocks the full price-based analysis that the
+public site can't publish, for anyone, with a free key.
 
-**Independent Test**: import synthetic CSVs in each supported broker's format;
-check the report, and check that no network request leaves the machine except
-to the price and SEC sources the user enabled.
+**Independent Test**: with a mock provider served from a test origin, connect
+a fake key, pull synthetic data, and check that (a) the requests go only to
+the provider's host, (b) the data is in IndexedDB, (c) the look-up for the
+RYDE-shaped symbol shows VETO on 2024-09-06, (d) no request goes anywhere
+else.
 
 **Acceptance Scenarios**:
 
-1. **Given** a holdings CSV, **When** it is imported, **Then** account numbers are dropped (at most the last 4 digits kept for labelling) and holdings are stored only in the local cache.
-2. **Given** holdings with 80% in one stock whose filings show 4 or more red flags, **When** the report runs, **Then** it shows a concentration warning first.
-3. **Given** past buys, **When** the report runs, **Then** each buy gets a "was I pumped?" answer using only data known on the buy date, with hindsight shown separately.
-4. **Given** the user clicks "delete my data", **When** it finishes, **Then** the cache file is gone and a fresh report is empty.
+1. **Given** a valid key, **When** the person pulls 70 sessions of the whole market from Massive's free tier, **Then** the page respects the rate limit (5 calls a minute), shows time remaining, and can be closed and resumed.
+2. **Given** pulled data, **When** the person looks up a ticker, **Then** they see the full check (pump profile, structural flags from SEC, history), marked "from your data, on this device".
+3. **Given** a bad or expired key, **When** a pull starts, **Then** the page says so in plain words and stores nothing.
+4. **Given** the person chooses "don't remember my key", **When** they close the tab, **Then** the key is gone and the data stays.
 
 ---
 
-### User Story 2 - Robinhood through its official read-only tools (Priority: P2)
+### User Story 2 - Connect Robinhood through its read-only MCP tools (Priority: P2)
 
-A Robinhood customer who uses an AI assistant with Robinhood's own MCP server
-asks: "check my holdings with Red Flag Club." The assistant reads positions and
-orders with the read-only tools and passes them to the local server's
-`monitor_digest` and `was_i_pumped`.
+A Robinhood customer clicks "Connect Robinhood", signs in on Robinhood's own
+page (the standard MCP sign-in flow), and the site reads their positions,
+orders and price history through Robinhood's MCP server, read-only. They get
+red flags on each holding, a concentration warning, "was I pumped?" for past
+buys and the sell-only position rules.
 
-**Why this priority**: it exists in part today (`monitor_digest`); this story
-makes it a documented, tested connector.
+**Why this priority**: it's the account the founding story happened in, and
+the place most at-risk people already hold stocks. It depends on research
+item R2.
+
+**Independent Test**: against a mock MCP server that exposes both read and
+write tools, connect, pull, and check that only allowlisted read tools are
+ever called, and that calling any other tool is impossible from the code.
 
 **Acceptance Scenarios**:
 
-1. **Given** positions passed in from the assistant, **When** the digest runs, **Then** account numbers are discarded and nothing is written except the local cache the user chose.
-2. **Given** the connector, **When** its interface is inspected, **Then** it has no method that writes to the brokerage (tested).
+1. **Given** a connected account, **When** data is pulled, **Then** only tools on the read-only allowlist are called (FR-004), and account numbers are dropped except the last 4 digits.
+2. **Given** the MCP server offers order-placing tools, **When** the client starts, **Then** it never lists them in its UI and refuses to call them (tested).
+3. **Given** the sign-in is cancelled or expires, **When** a pull runs, **Then** nothing is stored and the person is asked to reconnect.
 
 ---
 
-### User Story 3 - Friends and family (Priority: P3)
+### User Story 3 - Import files from any brokerage (Priority: P2)
 
-The maintainer and friends each want their own analysis.
+A Vanguard, Fidelity or Schwab customer (or anyone whose provider can't be
+reached from a browser) downloads their holdings and trades as CSV and drops
+the files on the page. The files are read in the browser; nothing is
+uploaded.
+
+**Why this priority**: works for every brokerage today, with no key and no
+sign-in.
 
 **Acceptance Scenarios**:
 
-1. **Given** a friend, **When** they want reports, **Then** the default is that they install their own copy (one command), so their data never sits on someone else's machine.
-2. [NEEDS CLARIFICATION: should one local install support several people as separate profiles, each encrypted with its own passphrase and with explicit consent, or is "one person, one install" enough?]
+1. **Given** a supported CSV, **When** it is dropped on the page, **Then** holdings and trades appear in "My data" and the file never leaves the browser (no network request during import, tested).
+2. **Given** an unknown CSV layout, **When** it is dropped, **Then** the page shows which columns it found and imports nothing partially.
 
 ---
 
-### User Story 4 - Personal price source for price-based checks (Priority: P3)
+### User Story 4 - Query your own history (Priority: P3)
 
-For the pump-profile check and charts on their own holdings, the user can plug
-in their own free data source: their own Tiingo or Massive key, or a local-only
-price fetcher. Data stays on their machine and is labelled "personal use".
+With data pulled, the person can filter and sort it ("small caps up 50% or more
+in 5 sessions in March", "my buys that matched the pump profile"), see a
+chart, and download their results as CSV to their own computer.
 
 **Acceptance Scenarios**:
 
-1. **Given** a personal key, **When** the report runs, **Then** price-based flags appear in the private report and are never exported anywhere.
+1. **Given** pulled data, **When** a query runs, **Then** it runs entirely in the browser and its results are only offered as a local download.
+
+---
+
+### User Story 5 - Manage and delete (Priority: P1)
+
+"My data" lists each connected source, what was pulled, how much space it
+uses, and when; with buttons to refresh, disconnect, forget the key, and
+**delete everything**.
+
+**Acceptance Scenarios**:
+
+1. **Given** any stored data, **When** "delete everything" is confirmed, **Then** IndexedDB, local storage and any cached keys for the site are cleared, and the page shows an empty state.
 
 ### Edge Cases
 
-- A CSV in an unknown format: show which columns were found and which are missing; import nothing partially.
-- Options, crypto, funds: listed but not scored (the checks are for small-cap stocks).
-- The same holding in two accounts: shown per account and combined.
-- A user shares a screenshot of their report: the report shows no full account numbers, and a "remove amounts before sharing" toggle hides dollar values.
+- **A provider doesn't allow browser requests** (CORS): the page says so, and offers the CSV path or the optional local helper (FR-014) for that provider. It never routes keys through a third-party proxy.
+- **Browser storage limits:** the page estimates the size before a pull (whole-market history can be hundreds of MB), asks the browser for persistent storage, and offers a smaller window.
+- **Private/incognito windows:** data disappears when the window closes; the page warns.
+- **Two people sharing one computer account:** they share the browser profile and therefore the data; the page recommends separate browser profiles.
+- **The public site's code updates:** stored data keeps working (versioned schema with migrations).
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
-- **FR-001**: Connectors MUST be read-only. The connector interface has no order, transfer, alert or watchlist methods, and a test proves it (hard rule 1).
-- **FR-002**: Everything MUST run on the user's machine. No hosted service, no telemetry, no upload; the only network calls are to the data sources the user enabled (SEC EDGAR, their own price key, their own brokerage tools).
-- **FR-003**: Full account numbers MUST never be stored. Only the last 4 digits may be kept, as a label.
-- **FR-004**: The local cache MUST be deletable in one action, and SHOULD be encrypted at rest [NEEDS CLARIFICATION: OS-level disk encryption assumed, or the app's own passphrase?].
-- **FR-005**: No credentials MUST be needed for the CSV path. Connectors that need a password to log in to a brokerage on the user's behalf (unofficial APIs, screen scraping) are out of scope: they break brokerage terms and would mean storing passwords.
-- **FR-006**: Personal data MUST never reach the public site, the public repos or the scan log. The public build reads no personal tables, and a test proves it.
-- **FR-007**: Reports MUST follow the defence-path rules: never a buy signal, never "add to this position", position rules are sell-only.
-- **FR-008**: The first supported CSV formats: Vanguard, Robinhood, Fidelity, Schwab [NEEDS CLARIFICATION: confirm order], each with a synthetic sample file and tests.
-- **FR-009**: Aggregator services (Plaid, SnapTrade and similar) are out of scope for v1; they would send account data through a third party and need their own privacy review.
+**Sources**
+- **FR-001**: The person MUST be able to connect any of: Tiingo (API key), Massive (API key), Robinhood (MCP sign-in), and CSV files from Vanguard, Fidelity, Schwab and Robinhood [NEEDS CLARIFICATION: confirm the first CSV formats]. Each source is a connector with the same interface: describe, connect, pull(window), status, disconnect.
+- **FR-002**: Connectors MUST call only their provider's documented endpoints, from the browser, with the person's own credentials. No Red Flag Club server, and no third-party proxy, is ever in the path.
+- **FR-003**: Pulls MUST respect each provider's published free-tier limits, be resumable, and show progress and the provider's name on every result ("data: your Tiingo account").
+
+**Read-only, enforced**
+- **FR-004**: The Robinhood connector MUST call only an explicit **allowlist of read-only tools** (positions, orders, historicals, fundamentals, SEC filing index, quotes). Any tool whose name or description indicates a write (place, cancel, create, update, delete, add, remove, exercise, follow, review an order) MUST be unreachable from the code, with a test that runs against a mock server exposing such tools (hard rule 1).
+- **FR-005**: No connector MAY place, cancel or change an order, alert, watchlist or transfer. The connector interface has no write method (tested).
+
+**Local only**
+- **FR-006**: All pulled data, results and settings MUST be stored only in the visitor's browser (IndexedDB / local storage) for the site's origin. Nothing is written to any repository, server or analytics service.
+- **FR-007**: The site MUST make no network request with personal data except to the provider the person connected. The public data files the site already serves (spec 006/009) are fetched as before, without any personal data in the request.
+- **FR-008**: Full account numbers MUST never be stored; at most the last 4 digits as a label.
+
+**Keys and code integrity**
+- **FR-009**: API keys MUST be kept only for the session by default. "Remember on this device" is opt-in, and stores the key encrypted with a passphrase the person chooses (WebCrypto, AES-GCM with a PBKDF2- or Argon2-derived key), never in plain text.
+- **FR-010**: The site MUST ship a strict Content Security Policy: scripts only from the site itself, no inline scripts, and `connect-src` limited to the site, SEC EDGAR and the supported providers' API hosts, so injected code can't send keys elsewhere.
+- **FR-011**: The site MUST load no third-party scripts, fonts, analytics or trackers (as today).
+- **FR-012**: Each published build MUST be reproducible from a tagged commit of the public code repo, and list its commit and file hashes on the About page, so anyone can check the code they're running.
+
+**Same analysis as everywhere else**
+- **FR-013**: Verdicts computed in the browser MUST match the reference Python implementation (`src/`) on the shared synthetic fixtures (conformance tests), including both reference cases: RYDE blocks on 2024-09-06 with the pump trigger on 2024-09-04; DJT only warns. [Decided in plan: run `src/` in the browser via Pyodide, or port to JavaScript with conformance tests.]
+- **FR-014**: An optional **local helper** (the existing server in `server/`, run with Docker on the person's own machine) MAY be offered for providers a browser can't reach, and for people who prefer a desktop setup. It follows the same rules: local only, read-only.
+- **FR-015**: Results MUST follow the defence-path rules: never a buy signal, never "add to this position", position rules sell-only, no claim that any company is a fraud.
+
+**Delete**
+- **FR-016**: "Delete everything" MUST remove all stored keys, data and settings for the site in one action (tested).
 
 ### Key Entities
 
-- **Account**: broker, label (last 4 digits at most), owner profile.
-- **Holding**: symbol, quantity, average cost, as-of date, account.
-- **Trade**: symbol, side, quantity, price, date, account (used for "was I pumped?" and the position rules).
-- **Report**: per-holding flags, concentration, past-buy answers, generated-at.
+- **Source**: provider, kind (api-key, mcp, file), status, last pull, data window, size.
+- **Bar**: symbol, date, OHLCV, provider, interpolated flag (filtered before any calculation, hard rule 5).
+- **Account / Holding / Trade**: as in the earlier draft, with account labels limited to the last 4 digits.
+- **Result**: check, symbol, as-of date, verdict, flags, computed-at.
 
 ## Success Criteria *(mandatory)*
 
-- **SC-001**: A first-time user imports a CSV and sees a report in under 5 minutes, without writing code.
-- **SC-002**: With networking disabled except SEC EDGAR, the CSV path works and makes no other network call (tested).
-- **SC-003**: No full account number appears in the cache, logs or report (tested with synthetic numbers).
-- **SC-004**: Zero brokerage write calls are possible from the code (tested at the interface).
+- **SC-001**: A first-time visitor with a free Massive or Tiingo key goes from "Connect" to a full price-based look-up in under 10 minutes, with no install.
+- **SC-002**: A network capture of the whole flow shows requests only to the site, SEC EDGAR and the provider the person chose (automated browser test with a mock provider).
+- **SC-003**: The Robinhood connector cannot call a write tool (test against a mock MCP server that offers them).
+- **SC-004**: Browser verdicts match the Python reference on 100% of the shared fixture cases.
+- **SC-005**: "Delete everything" leaves no site data in the browser (test).
+- **SC-006**: No personal data, key or pulled market data ever appears in a public repository (leak gate, and the public build reads no browser data).
+
+## Research for the plan phase (must be answered before code)
+
+- **R1, browser access per provider:** does each provider's API allow browser requests from another origin (CORS), and do its terms allow calling it from a browser with the user's own key? Tiingo, Massive and SEC EDGAR each need checking (SEC requires a User-Agent header, which browsers don't let pages set; SEC data may need to come from the site's own published files instead).
+- **R2, Robinhood MCP from a web page:** can a browser-based MCP client connect to Robinhood's MCP server (sign-in flow, client registration, CORS), and do Robinhood's terms allow a third-party web app to do so? If not, the Robinhood paths are CSV import and the person's own AI assistant with the local helper.
+- **R3, analysis engine in the browser:** Pyodide running `src/` unchanged (one source of truth, ~10 MB first load) versus a JavaScript port (smaller, two implementations to keep in step).
+- **R4, storage:** realistic sizes for 70 and 500 sessions of whole-market small-cap bars in IndexedDB, and persistent-storage behaviour in Chrome, Safari and Firefox.
 
 ## Assumptions
 
-- Users can export CSV from their brokerage's website (Vanguard, Fidelity, Schwab and Robinhood all offer this).
-- Robinhood's official MCP server is used only through the user's own AI assistant, with read-only tools.
-- This builds on the existing local server (spec 003), `monitor_digest` and `was_i_pumped`.
-- Constitution note: the public deployment "never stores positions"; this feature stores them only in a personal local install that the user controls, which the plan phase must state explicitly.
+- People create their own accounts with the providers; Red Flag Club has no accounts of its own.
+- This replaces the earlier local-server-first draft of this spec; the local server stays available as an optional helper (FR-014).
+- Constitution note: the public deployment stores no positions or personal data. This feature stores them only in the visitor's own browser, which the plan must state explicitly.
+- Out of scope for v1: password-based or screen-scraping connectors (they break brokerage terms and would mean handling passwords), aggregator services such as Plaid or SnapTrade (third party in the path), and syncing data between a person's devices.
